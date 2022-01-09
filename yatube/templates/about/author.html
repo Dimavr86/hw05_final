@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Об авторе проекта{% endblock title %}
+{% block content %}
+      <br><br><br>
+      <div class="row">
+        <aside class="col-12 col-md-3">
+          <img src="{% static 'img/tanci_s_bubnom.jpg' %}" 
+          alt="Это я во время решения задач в тренажере Яндекс.Практикума" align="left"
+          width="100%">
+        </aside>
+        <article class="col-12 col-md-9">
+          <h1>Привет, меня зовут Дмитрий!</h1>
+          <p>Я автор данного портала</p>
+          <p>
+            Я являюсь студентом Яндекс.Практикума по специальности backend-разработчик, 28 когорта.<br>
+            А слева на картинке я во время решения задач в тренажёре
+          </p>
+        </article>
+      </div>
+{% endblock content %}
