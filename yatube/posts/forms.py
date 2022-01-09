@@ -24,6 +24,7 @@ class PostForm(forms.ModelForm):
 
         return text
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment

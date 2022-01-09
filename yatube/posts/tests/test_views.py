@@ -1,13 +1,15 @@
 import shutil
 import time
-from django.core.cache import cache
-from django import forms
-from django.test import Client, TestCase, override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from posts.models import Comment, Follow, Group, Post, User
-from .fix_data import small_gif, TEMP_MEDIA_ROOT
 
+from django import forms
+from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+
+from posts.models import Comment, Follow, Group, Post, User
+
+from .fix_data import TEMP_MEDIA_ROOT, small_gif
 
 # Создаем временную папку для медиа-файлов;
 # на момент теста медиа папка будет переопределена

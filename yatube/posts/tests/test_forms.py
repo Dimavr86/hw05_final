@@ -1,13 +1,13 @@
 import shutil
 from http import HTTPStatus
-from django.test import Client, TestCase, override_settings
-from django.core.files.uploadedfile import SimpleUploadedFile   
 
-from django.test import Client, TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from ..models import Group, Post, User
-from .fix_data import small_gif, TEMP_MEDIA_ROOT
+from .fix_data import TEMP_MEDIA_ROOT, small_gif
+
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostCreateFormTests(TestCase):
@@ -62,11 +62,12 @@ class PostCreateFormTests(TestCase):
         )
         post = Post.objects.filter(pk=1)
         print(post)
-        self.assertTrue(Post.objects.filter(
-                        group=form_data['group'],
-                        text=form_data['text'],
-                        image='posts/small.gif',
-                        ).exists()
+        self.assertTrue(
+            Post.objects.filter(
+                group=form_data['group'],
+                text=form_data['text'],
+                image='posts/small.gif',
+            ).exists()
         )
 
     def test_authorized_user_edit_post(self):
@@ -91,7 +92,6 @@ class PostCreateFormTests(TestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         # Проверяем, что в созданном посте изменённая информация
-
 
     def test_create_post_with_empty_text(self):
         """Проверяем, что нельзя создать пост без текста."""

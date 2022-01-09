@@ -117,7 +117,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # указываем директорию, в которую будут складываться файлы писем
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-#количество выводимых записей для пагинатора
+# количество выводимых записей для пагинатора
 POSTS_ON_PAGE = 10
 
 CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
