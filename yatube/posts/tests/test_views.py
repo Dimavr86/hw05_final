@@ -332,4 +332,4 @@ class FollowTest(TestCase):
         ))
         # проверяем, что у него нет постов от авторов,
         # на которых он не подписывался
-        self.assertTrue(post in response.context['page_obj'])
+        self.assertFalse(post in response.context['page_obj'])
