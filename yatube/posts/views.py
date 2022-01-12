@@ -42,9 +42,10 @@ def profile(request, username):
     page_number = request.GET.get('page')
     page_obj = paginate(posts, page_number)
     following = False
-    if (request.user.is_authenticated and Follow.objects.filter(
-        author=author,
-        user=request.user).exists()):
+    if (request.user.is_authenticated
+        and Follow.objects.filter(
+            author=author,
+            user=request.user).exists()):
         following = True
     context = {
         'page_obj': page_obj,
