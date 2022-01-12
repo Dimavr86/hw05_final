@@ -47,6 +47,10 @@ class PostsURLTests(TestCase):
                 'url': '/create/',
                 'template': 'posts/create_post.html'
             },
+            'follow_index': {
+                'url': '/follow/',
+                'template': 'posts/follow.html'
+            }
         }
 
     def setUp(self):
@@ -58,6 +62,7 @@ class PostsURLTests(TestCase):
         self.authorized_client.force_login(self.user)
         self.authorized_author = Client()
         self.authorized_author.force_login(self.author)
+        self.pages_properties
 
     def test_templates(self):
         """Проверка использования правильных шаблонов для вызываемых страниц"""
@@ -76,8 +81,8 @@ class PostsURLTests(TestCase):
         """Проверка доступа к страницам согласно прав пользователей"""
         access_rights = {
             self.guest: ['index', 'group_list', 'profile', 'post_detail'],
-            self.authorized_client: ['create_post'],
-            self.authorized_author: ['post_edit']
+            self.authorized_client: ['create_post', 'follow_index'],
+            self.authorized_author: ['post_edit', 'follow_index']
         }
         for user, pages in access_rights.items():
             with self.subTest(user=user):

@@ -248,15 +248,11 @@ class PaginatorTests(TestCase):
                 )
 
 
-class FollowersTest(TestCase):
+class FollowTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Test_author')
         cls.follower = User.objects.create(username='Test_follower')
-        cls.post = Post.objects.create(
-            author=cls.author,
-            text='Текст поста для теста',
-        )
         cls.user_2 = User.objects.create(username='Another_user')
 
     def setUp(self):
@@ -269,7 +265,7 @@ class FollowersTest(TestCase):
 
     def test_user_can_subscribe(self):
         """Авторизованный пользователь может
-        подписываться и отписываться на/от других пользователей"""
+        подписываться на других пользователей"""
         follow_count = Follow.objects.count()
         # создаём подписку
         self.authorized_follower.get(reverse(
@@ -281,32 +277,59 @@ class FollowersTest(TestCase):
         self.assertEqual(Follow.objects.count(), follow_count + 1)
         self.assertEqual(follow.author_id, self.author.id)
         self.assertEqual(follow.user_id, self.follower.id)
+
+    def test_user_can_unsubscribe(self):
+        """Авторизованный пользователь может
+        отписываться от других пользователей"""
+        Follow.objects.create(
+            user=self.follower,
+            author=self.author
+        )
+        follow_count = Follow.objects.count()
         self.authorized_follower.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': self.author.username}
         ))
-        self.assertEqual(Follow.objects.count(), 0)
+        # Проверяем, что запись удалена из БД
+        self.assertEqual(Follow.objects.count(), follow_count - 1)
         self.assertFalse(Follow.objects.filter(
             user=self.follower,
             author=self.author
         ).exists())
 
     def test_follow_index_page_correct(self):
-        """Проверяем, Новая запись пользователя появляется в ленте тех,
-        кто на него подписан и не появляется в ленте тех, кто не подписан."""
+        """Проверяем, что новая запись пользователя появляется в ленте тех,
+        кто на него подписан."""
         # создаём подписку
         Follow.objects.create(
             user=self.follower,
             author=self.author)
+        # автор создаёт пост
+        post = Post.objects.create(
+            text='Текст тестового поста',
+            author=self.author
+        )
         response = self.authorized_follower.get(reverse(
-            'posts:follow_index'
-        ))
+            'posts:follow_index'))
         # проверяем, что пост автора, на которого подписались есть на странице
-        self.assertEqual(response.context['page_obj'][0], self.post)
-        # делаем запрос страница для другого пользователя
-        response_2 = self.another_user.get(reverse(
+        self.assertEqual(response.context['page_obj'][0], post)
+
+    def test_follow_index_page_not_contained_posts_for_another_user(self):
+        """Проверяем, что новая запись пользователя не появляется в ленте тех,
+        кто на него не подписан."""
+        # создаём подписку
+        Follow.objects.create(
+            user=self.follower,
+            author=self.author)
+        # автор создаёт пост
+        post = Post.objects.create(
+            text='Текст тестового поста',
+            author=self.author
+        )
+        # делаем запрос страницы для другого пользователя
+        response = self.another_user.get(reverse(
             'posts:follow_index'
         ))
         # проверяем, что у него нет постов от авторов,
         # на которых он не подписывался
-        self.assertFalse(self.post in response_2.context['page_obj'])
+        self.assertTrue(post in response.context['page_obj'])

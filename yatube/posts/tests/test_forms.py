@@ -60,7 +60,7 @@ class PostCreateFormTests(TestCase):
             reverse(
                 'posts:profile', kwargs={'username': self.author.username})
         )
-        post = Post.objects.filter(pk=1)
+        post = Post.objects.filter(text=form_data['text'])
         print(post)
         self.assertTrue(
             Post.objects.filter(

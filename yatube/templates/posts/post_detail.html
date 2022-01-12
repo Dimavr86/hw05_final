@@ -3,8 +3,7 @@
 {% block title %} Пост {{post.text|truncatechars:30 }}
 {% endblock title %}
 {% block content %}
-{% load user_filters %}
-<div class="container py=5">
+<div class="mb-5">
   <br><br><br>
   <div class="row">
     <aside class="col-12 col-md-3">
@@ -60,19 +59,7 @@
         редактировать запись
       </a>
       {% if user.is_authenticated %}
-      <div class="card my-4">
-        <h5 class="card-header">Добавить комментарий:</h5>
-        <div class="card-body">
-          <!-- action ведет на обработчик формы  -->
-          <form method="post" action="{% url 'posts:add_comment' post.id %}">
-            {% csrf_token %}
-            <div class="form-group mb-2">
-              {{ form.text|addclass:'form-control' }}
-            </div>
-            <button type="submit" class="btn btn-primary">Отправить</button>
-          </form>
-        </div>
-      </div>
+        {% include 'includes/comment.html' %}
       {% endif %}
       {% for comment in comments %}
       <div class="media mb-4">
