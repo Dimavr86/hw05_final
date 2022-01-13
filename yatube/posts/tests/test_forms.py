@@ -5,12 +5,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from ..models import Group, Post, User
+from ..models import Comment, Group, Post, User
 from .fix_data import TEMP_MEDIA_ROOT, small_gif
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
-class PostCreateFormTests(TestCase):
+class PostFormTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Test_author')
@@ -132,3 +132,47 @@ class PostCreateFormTests(TestCase):
         self.assertRedirects(response, redirect)
         # Проверяем, что пост не создался
         self.assertEqual(Post.objects.count(), posts_count)
+
+    def test_nonauthorized_user_create_comment(self):
+        """Проверка создания комментария неавторизованным пользователем."""
+        comments_count = Comment.objects.count()
+        post = Post.objects.create(
+            text='Текст поста для редактирования',
+            author=self.author)
+        form_data = {'text': 'Тестовый коментарий'}
+        response = self.guest.post(
+            reverse(
+                'posts:add_comment',
+                kwargs={'post_id': post.id}),
+            data=form_data,
+            follow=True)
+        # Проверяем редирект на страницу входа
+        redirect = reverse('login') + '?next=' + reverse(
+            'posts:add_comment', kwargs={'post_id': post.id})
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(Comment.objects.count(), comments_count)
+        self.assertRedirects(response, redirect)
+
+    def test_authorized_user_create_comment(self):
+        """Проверка создания коментария авторизованным клиентом."""
+        comments_count = Comment.objects.count()
+        post = Post.objects.create(
+            text='Текст поста',
+            author=self.author)
+        form_data = {'text': 'Тестовый коментарий'}
+        response = self.authorized_user.post(
+            reverse(
+                'posts:add_comment',
+                kwargs={'post_id': post.id}),
+            data=form_data,
+            follow=True)
+        comment = Comment.objects.latest('id')
+        self.assertEqual(Comment.objects.count(), comments_count + 1)
+        self.assertEqual(comment.text, form_data['text'])
+        self.assertEqual(comment.author, self.author)
+        self.assertEqual(comment.post_id, post.id)
+        self.assertRedirects(
+            response, reverse(
+                'posts:post_detail', kwargs={'post_id': post.id}
+            )
+        )
