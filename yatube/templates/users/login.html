@@ -39,13 +39,13 @@
                 aria-required="false"
               {% endif %}
             >
-              <label for="{{ field.id_for_label }}">
+              <label class="col-sm-4" for="{{ field.id_for_label }}">
                 {{ field.label }}
                   {% if field.field.required %}
                     <span class="required text-danger">*</span>
                   {% endif %}
               </label>
-              <div>
+              <div class="col">
               {{ field|addclass:'form-control' }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
@@ -55,13 +55,9 @@
               </div>
             </div>
           {% endfor %}
-          <div class="col-md-6 offset-md-4">
-            <button type="submit" class="btn btn-primary">
-              Войти
-            </button>
-            <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">
-              Забыли пароль?
-            </a>
+          <div class="col-md-6 offset-sm-4">
+            <button type="submit" class="btn btn-primary">Войти</button>
+            <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">Забыли пароль?</a>
           </div>
           </form>
         </div> <!-- card body -->

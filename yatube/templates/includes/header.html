@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: lightskyblue">
+<nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: lightskyblue">
   <div class="container">
     <a class="navbar-brand" href="{% url 'posts:index' %}">
       <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt=""/>
@@ -27,8 +27,10 @@
         <li class="nav-item">
           <a class="nav-link link-light {% if view_name == 'users:logout' %}active{% endif %}"href="{% url 'users:logout' %}">Выйти</a>
         </li>
-        <li>Пользователь: {{ user.username }}</li>
-        <li>{% else %}</li>
+        <li class="nav-item">
+          <img src="{% static 'img/user-tie-solid.svg' %}" title="Пользователь: {{ user.username }}" alt="">
+        </li>
+        {% else %}
         <li class="nav-item">
           <a class="nav-link link-light {% if view_name == 'users:login' %}active{% endif %}"href="{% url 'users:login' %}">Войти</a>
         </li>

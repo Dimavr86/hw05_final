@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+
 {% load thumbnail %}
-{% block title %} Пост {{post.text|truncatechars:30 }}
-{% endblock title %}
+
+{% block title %} Пост {{post.text|truncatechars:30 }}{% endblock title %}
+
+{% load user_filters %}
 {% block content %}
-<div class="mb-5">
-  <br><br><br>
-  <div class="row">
+  <div class="row mb-5">
     <aside class="col-12 col-md-3">
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
@@ -33,7 +34,7 @@
             align-items-center
           "
         >
-          Всего постов автора: <span>{{ posts_qty }}</span>
+          Всего постов автора: <span>{{ post.author.posts.all|length }}</span>
         </li>
         <li class="list-group-item">
           <a href="{% url 'posts:profile' post.author %}">
@@ -53,7 +54,7 @@
             {% if user == post.author %}
               {% url 'posts:post_edit' post.id %}
             {% else %}
-              {% url 'posts:post_detail' post.id %}
+              {% url 'posts:post_detail' post.pk %}
             {% endif %}"
       >
         редактировать запись
@@ -61,7 +62,7 @@
       {% if user.is_authenticated %}
         {% include 'includes/comment.html' %}
       {% endif %}
-      {% for comment in comments %}
+      {% for comment in post.comments.all %}
       <div class="media mb-4">
         <div class="media-body">
           <h5 class="mt-0">
@@ -77,5 +78,4 @@
     {% endfor %}
     </article>
   </div>
-</div>
 {% endblock content %}
